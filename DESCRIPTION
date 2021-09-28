@@ -18,3 +18,7 @@ RoxygenNote: 7.1.1
 Imports: 
     entropy,
     tibble
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
