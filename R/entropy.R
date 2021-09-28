@@ -1,7 +1,7 @@
 #' Normalise Counts into a Distribution
 #'
 #' A function that takes frequency count data and normalises it into a
-#' probability distribution.
+#' probability distribution. Only available internally within SCEnt.
 #'
 #' @param dist A vector of a frequency distribution.
 #'
@@ -28,17 +28,24 @@ normalise <- function(dist) {
 #'
 #' @examples
 gene_hom <- function(expr, unit = "log2", normalise = TRUE, transpose = FALSE) {
+  #Checking if the expression is a vector
   if (is.vector(expr)) {
+    #Normalising the data if needed
     if (normalise) {
       expr <- normalise(expr)
     }
+    #Calculating the entroy of the expression distribution
     entropy::entropy(expr, unit = unit)
+  #Checking if the expression is a matrix
   } else if (is.matrix(expr)) {
+    #Normalising the data if needed
     if (normalise) {
       expr <- t(apply(expr, 1, normalise))
     }
+    #Calculating the entropy of each expression distribution
     apply(expr, 1, function(x) {entropy::entropy(x, unit = unit)})
   } else {
+    #throwing an error if a vector or a matrix was not passed in
     stop()
   }
 }
@@ -60,24 +67,36 @@ gene_hom <- function(expr, unit = "log2", normalise = TRUE, transpose = FALSE) {
 #'
 #' @examples
 gene_het <- function(expr, unit = "log2", normalise = TRUE, transpose = FALSE) {
+  #Checking if the expression is a matrix
   if (is.vector(expr)) {
+    #Normalising the expression if needed
     if (normalise) {
       expr <- normalise(expr)
     }
+    #Generating the uniform distribution vector
     num_cell <- length(expr)
     unif_dist <- rep(1/num_cell, num_cell)
+    #Finding the KL Divergence of the expression distribution from the
+    #uniform distribution
     entropy::KL.plugin(expr, unif_dist, unit = unit)
+  #Checking if the data is a matrix
   } else if (is.matrix(expr)) {
+    #Transposing the matrix if needed
     if (transpose) {
       expr <- t(expr)
     }
+    #Normalising the data if needed
     if (normalise) {
       expr <- t(apply(expr, 1, normalise))
     }
+    #Generating the uniform distribution vector
     num_cell <- dim(expr)[2]
     unif_dist <- rep(1/num_cell, num_cell)
+    #Finding the KL Divergence of the expression distribution from the
+    #uniform distribution for each exoression distribution
     apply(expr, 1, function(x) {entropy::KL.plugin(x, unif_dist, unit = unit)})
   } else {
+    #Throwing an error if the input is not a vector or a matrix
     stop()
   }
 }
