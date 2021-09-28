@@ -136,7 +136,7 @@ scent_select(gene_counts, bit_threshold = 0.85, count_threshold = 2)
 
 This is to avoid problems with orders of operation, and instead `scent_select()` should be piped back into itself so that the order in which the thresholds are applied is explicit
 
-```{r}
+```{r showing piping feature selections together}
 gene_counts %>%
   scent_select(bit_threshold = 0.85) %>%
   scent_select(count_threshold = 2)

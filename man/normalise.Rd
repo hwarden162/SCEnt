@@ -15,5 +15,5 @@ frequencies.
 }
 \description{
 A function that takes frequency count data and normalises it into a
-probability distribution.
+probability distribution. Only available internally within SCEnt.
 }

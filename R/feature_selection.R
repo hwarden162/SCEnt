@@ -22,21 +22,26 @@
 #'
 #' @examples
 scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, perc_threshold = NULL, unit = "log2", normalise = TRUE, transpose = FALSE) {
+  #Transposing the matrix if required
   if (transpose) {
     expr <- t(expr)
   }
 
+  #Checking only one threshold has been supplied
   if (is.null(bit_threshold) + is.null(count_threshold) + is.null(perc_threshold) != 2) {
     stop("\n Only one threshold can be set at a time")
   }
 
+  #Finding heterogeneity values for each of the genes
   het_vals <- gene_het(expr, unit, normalise, transpose = TRUE)
 
+  #If bit_threshold supplied, finding all genes above the threshold
   if (!is.null(bit_threshold)) {
     indices <- het_vals > bit_threshold
     return(as.matrix(expr[,indices]))
   }
 
+  #If count_threshold is supplied, find the top n given genes by heterogeneity
   if (!is.null(count_threshold)) {
     indices <- sort(het_vals, decreasing = TRUE, index.return = TRUE)$ix
     if (length(indices) < count_threshold) {
@@ -47,6 +52,8 @@ scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, per
     }
   }
 
+  #If perc_threshold is supplied, finding all genes with heterogeneity above
+  #the given percentile
   if (!is.null(perc_threshold)) {
     indices <- het_vals >= stats::quantile(het_vals, perc_threshold)
     return(as.matrix(expr[,indices]))
@@ -77,7 +84,10 @@ scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, per
 #'
 #' @examples
 scent_select_tidy <- function(expr, bit_threshold = NULL, count_threshold = NULL, perc_threshold = NULL, unit = "log2", normalise = TRUE, transpose = FALSE) {
+  #Converting tibble to matrix
   expr <- as.matrix(expr)
+  #Calling the feature selection on the matrix
   reduced_expr <- scent_select(expr, bit_threshold, count_threshold, perc_threshold, unit, normalise, transpose)
+  #Converting the matrix back to a tibble
   tibble::as_tibble(reduced_expr)
 }
