@@ -27,7 +27,7 @@ scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, per
   }
 
   if (is.null(bit_threshold) + is.null(count_threshold) + is.null(perc_threshold) != 2) {
-    stop()
+    stop("\n Only one threshold can be set at a time")
   }
 
   het_vals <- gene_het(expr, unit, normalise, transpose = TRUE)
