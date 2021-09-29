@@ -21,6 +21,20 @@
 #' @export
 #'
 #' @examples
+#' #Creating Data
+#' gene1 <- c(0,0,0,0,1,2,3)
+#' gene2 <- c(5,5,3,2,0,0,0)
+#' gene3 <- c(2,0,2,1,3,0,1)
+#' gene4 <- c(3,3,3,3,3,3,3)
+#' gene5 <- c(0,0,0,0,5,0,0)
+#' gene_counts <- matrix(c(gene1,gene2,gene3,gene4,gene5), ncol = 5)
+#' rownames(gene_counts) <- paste0("cell",1:7)
+#' colnames(gene_counts) <- paste0("gene",1:5)
+#'
+#' #Performing Feature Selection
+#' scent_select(gene_counts, bit_threshold = 0.85)
+#' scent_select(gene_counts, count_threshold = 2)
+#' scent_select(gene_counts, perc_threshold = 0.25)
 scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, perc_threshold = NULL, unit = "log2", normalise = TRUE, transpose = FALSE) {
   #Transposing the matrix if required
   if (transpose) {
@@ -83,6 +97,22 @@ scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, per
 #' @export
 #'
 #' @examples
+#' #Creating Data
+#' library(tibble)
+#' gene1 <- c(0,0,0,0,1,2,3)
+#' gene2 <- c(5,5,3,2,0,0,0)
+#' gene3 <- c(2,0,2,1,3,0,1)
+#' gene4 <- c(3,3,3,3,3,3,3)
+#' gene5 <- c(0,0,0,0,5,0,0)
+#' gene_counts <- matrix(c(gene1,gene2,gene3,gene4,gene5), ncol = 5)
+#' rownames(gene_counts) <- paste0("cell",1:7)
+#' colnames(gene_counts) <- paste0("gene",1:5)
+#' gene_counts <- as_tibble(gene_counts)
+#'
+#' #Performing Feature Selection
+#' scent_select_tidy(gene_counts, bit_threshold = 0.85)
+#' scent_select_tidy(gene_counts, count_threshold = 2)
+#' scent_select_tidy(gene_counts, perc_threshold = 0.25)
 scent_select_tidy <- function(expr, bit_threshold = NULL, count_threshold = NULL, perc_threshold = NULL, unit = "log2", normalise = TRUE, transpose = FALSE) {
   #Converting tibble to matrix
   expr <- as.matrix(expr)
