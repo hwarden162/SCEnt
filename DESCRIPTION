@@ -7,9 +7,10 @@ Authors@R:
            role = c("aut", "cre"),
            email = "hugh.warden@outlook.com",
            comment = c(ORCID = "0000-0002-4308-7316"))
-Description: A package for single cell entropic analysis. From the work of 
-    Michael J. Casey, Jörg Fliege, Ruben J. Sanchez-Garcia and Ben D. 
-    MacArthur.
+Description: Analyse single cell RNA sequencing data using entropy to
+    calculate heterogeneity and homogeneity of genes amongst the cell
+    population. From the work of Michael J. Casey, Ruben J. Sanchez-Garcia 
+    and Ben D. MacArthur.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
