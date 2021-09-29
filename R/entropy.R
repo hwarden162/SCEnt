@@ -57,6 +57,10 @@ gene_hom <- function(expr, unit = "log2", normalise = TRUE, transpose = FALSE) {
     entropy::entropy(expr, unit = unit)
   #Checking if the expression is a matrix
   } else if (is.matrix(expr)) {
+    #Transposing matrix if needed
+    if (transpose) {
+      expr <- t(expr)
+    }
     #Normalising the data if needed
     if (normalise) {
       expr <- t(apply(expr, 1, normalise))
