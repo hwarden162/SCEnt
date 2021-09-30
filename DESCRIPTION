@@ -1,6 +1,6 @@
 Package: SCEnt
 Title: Single Cell Entropy Analysis of Gene Heterogeneity in Cell Populations
-Version: 0.0.1
+Version: 0.0.1.9000
 Authors@R: 
     person(given = "Hugh",
            family = "Warden",
