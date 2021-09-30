@@ -20,9 +20,15 @@ knitr::opts_chunk$set(
 
 SCEnt is a package for single cell entropy analysis. It can calculate metrics for the heterogeneity or homogeneity of a gene within a cell population. It can use these metrics to perform feature selection for scRNA-seq data.
 
-From the work of Michael J. Casey, Jörg Fliege, Ruben J. Sanchez-Garcia and Ben D. MacArthur. Package written by Hugh Warden.
+From the work of Michael J. Casey, Ruben J. Sanchez-Garcia and Ben D. MacArthur (2020) <doi:10.1101/2020.10.01.322255>. Package written by Hugh Warden.
 
 ## Installation
+
+SCEnt is available to install from CRAN:
+
+``` r
+install.packages("SCEnt")
+```
 
 And the development version of SCEnt is available from [GitHub](https://github.com/) with:
 
