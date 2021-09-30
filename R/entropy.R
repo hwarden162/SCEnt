@@ -69,7 +69,7 @@ gene_hom <- function(expr, unit = "log2", normalise = TRUE, transpose = FALSE) {
     apply(expr, 1, function(x) {entropy::entropy(x, unit = unit)})
   } else {
     #throwing an error if a vector or a matrix was not passed in
-    stop()
+    stop("\n gene_hom() should be passed either a matrix or a vector")
   }
 }
 
@@ -139,6 +139,6 @@ gene_het <- function(expr, unit = "log2", normalise = TRUE, transpose = FALSE) {
     apply(expr, 1, function(x) {entropy::KL.plugin(x, unif_dist, unit = unit)})
   } else {
     #Throwing an error if the input is not a vector or a matrix
-    stop()
+    stop("\n gene_het() should be passed either a matrix or a vector")
   }
 }
