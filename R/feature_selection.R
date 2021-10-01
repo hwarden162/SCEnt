@@ -21,56 +21,56 @@
 #' @export
 #'
 #' @examples
-#' #Creating Data
-#' gene1 <- c(0,0,0,0,1,2,3)
-#' gene2 <- c(5,5,3,2,0,0,0)
-#' gene3 <- c(2,0,2,1,3,0,1)
-#' gene4 <- c(3,3,3,3,3,3,3)
-#' gene5 <- c(0,0,0,0,5,0,0)
-#' gene_counts <- matrix(c(gene1,gene2,gene3,gene4,gene5), ncol = 5)
-#' rownames(gene_counts) <- paste0("cell",1:7)
-#' colnames(gene_counts) <- paste0("gene",1:5)
+#' # Creating Data
+#' gene1 <- c(0, 0, 0, 0, 1, 2, 3)
+#' gene2 <- c(5, 5, 3, 2, 0, 0, 0)
+#' gene3 <- c(2, 0, 2, 1, 3, 0, 1)
+#' gene4 <- c(3, 3, 3, 3, 3, 3, 3)
+#' gene5 <- c(0, 0, 0, 0, 5, 0, 0)
+#' gene_counts <- matrix(c(gene1, gene2, gene3, gene4, gene5), ncol = 5)
+#' rownames(gene_counts) <- paste0("cell", 1:7)
+#' colnames(gene_counts) <- paste0("gene", 1:5)
 #'
-#' #Performing Feature Selection
+#' # Performing Feature Selection
 #' scent_select(gene_counts, bit_threshold = 0.85)
 #' scent_select(gene_counts, count_threshold = 2)
 #' scent_select(gene_counts, perc_threshold = 0.25)
 scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, perc_threshold = NULL, unit = "log2", normalise = TRUE, transpose = FALSE) {
-  #Transposing the matrix if required
+  # Transposing the matrix if required
   if (transpose) {
     expr <- t(expr)
   }
 
-  #Checking only one threshold has been supplied
+  # Checking only one threshold has been supplied
   if (is.null(bit_threshold) + is.null(count_threshold) + is.null(perc_threshold) != 2) {
     stop("\n Only one threshold can be set at a time")
   }
 
-  #Finding heterogeneity values for each of the genes
+  # Finding heterogeneity values for each of the genes
   het_vals <- gene_het(expr, unit, normalise, transpose = TRUE)
 
-  #If bit_threshold supplied, finding all genes above the threshold
+  # If bit_threshold supplied, finding all genes above the threshold
   if (!is.null(bit_threshold)) {
     indices <- het_vals > bit_threshold
-    return(as.matrix(expr[,indices]))
+    return(as.matrix(expr[, indices]))
   }
 
-  #If count_threshold is supplied, find the top n given genes by heterogeneity
+  # If count_threshold is supplied, find the top n given genes by heterogeneity
   if (!is.null(count_threshold)) {
     indices <- sort(het_vals, decreasing = TRUE, index.return = TRUE)$ix
     if (length(indices) < count_threshold) {
       return(expr)
     } else {
       indices <- sort(indices[1:count_threshold])
-      return(as.matrix(expr[,indices]))
+      return(as.matrix(expr[, indices]))
     }
   }
 
-  #If perc_threshold is supplied, finding all genes with heterogeneity above
-  #the given percentile
+  # If perc_threshold is supplied, finding all genes with heterogeneity above
+  # the given percentile
   if (!is.null(perc_threshold)) {
     indices <- het_vals >= stats::quantile(het_vals, perc_threshold)
-    return(as.matrix(expr[,indices]))
+    return(as.matrix(expr[, indices]))
   }
 }
 
@@ -97,34 +97,36 @@ scent_select <- function(expr, bit_threshold = NULL, count_threshold = NULL, per
 #' @export
 #'
 #' @examples
-#' #Creating Data
+#' # Creating Data
 #' library(tibble)
-#' gene1 <- c(0,0,0,0,1,2,3)
-#' gene2 <- c(5,5,3,2,0,0,0)
-#' gene3 <- c(2,0,2,1,3,0,1)
-#' gene4 <- c(3,3,3,3,3,3,3)
-#' gene5 <- c(0,0,0,0,5,0,0)
-#' gene_counts <- matrix(c(gene1,gene2,gene3,gene4,gene5), ncol = 5)
-#' rownames(gene_counts) <- paste0("cell",1:7)
-#' colnames(gene_counts) <- paste0("gene",1:5)
+#' gene1 <- c(0, 0, 0, 0, 1, 2, 3)
+#' gene2 <- c(5, 5, 3, 2, 0, 0, 0)
+#' gene3 <- c(2, 0, 2, 1, 3, 0, 1)
+#' gene4 <- c(3, 3, 3, 3, 3, 3, 3)
+#' gene5 <- c(0, 0, 0, 0, 5, 0, 0)
+#' gene_counts <- matrix(c(gene1, gene2, gene3, gene4, gene5), ncol = 5)
+#' rownames(gene_counts) <- paste0("cell", 1:7)
+#' colnames(gene_counts) <- paste0("gene", 1:5)
 #' gene_counts <- as_tibble(gene_counts)
 #'
-#' #Performing Feature Selection
+#' # Performing Feature Selection
 #' scent_select_tidy(gene_counts, bit_threshold = 0.85)
 #' scent_select_tidy(gene_counts, count_threshold = 2)
 #' scent_select_tidy(gene_counts, perc_threshold = 0.25)
 scent_select_tidy <- function(expr, bit_threshold = NULL, count_threshold = NULL, perc_threshold = NULL, unit = "log2", normalise = TRUE, transpose = FALSE) {
-  #Converting tibble to matrix
+  # Converting tibble to matrix
   expr <- as.matrix(expr)
-  #Calling the feature selection on the matrix
-  reduced_expr <- scent_select(expr,
-                               bit_threshold,
-                               count_threshold,
-                               perc_threshold,
-                               unit,
-                               normalise,
-                               transpose)
-  #Converting the matrix back to a tibble
+  # Calling the feature selection on the matrix
+  reduced_expr <- scent_select(
+    expr,
+    bit_threshold,
+    count_threshold,
+    perc_threshold,
+    unit,
+    normalise,
+    transpose
+  )
+  # Converting the matrix back to a tibble
   tibble::as_tibble(reduced_expr)
 }
 
@@ -148,10 +150,10 @@ rm_low_counts <- function(expr, count_threshold = NULL, perc_threshold = NULL, t
 
   if (!is.na(count_threshold)) {
     indices <- gene_counts > count_threshold
-    expr[,indices]
+    expr[, indices]
   } else if (!is.na(perc_threshold)) {
     indices <- gene_counts > stats::quantile(gene_counts, perc_threshold)
-    expr[,indices]
+    expr[, indices]
   } else {
     stop()
   }
@@ -160,9 +162,9 @@ rm_low_counts <- function(expr, count_threshold = NULL, perc_threshold = NULL, t
 rm_low_counts_tidy <- function(expr, count_threshold = NULL, perc_threshold = NULL, transpose = FALSE) {
   expr <- as.matrix(expr)
   expr <- rm_low_counts(expr,
-                        count_threshold = count_threshold,
-                        perc_threshold = perc_threshold,
-                        transpose = transpose
-                        )
+    count_threshold = count_threshold,
+    perc_threshold = perc_threshold,
+    transpose = transpose
+  )
   as_tibble(expr)
 }
