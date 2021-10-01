@@ -117,7 +117,52 @@ scent_select_tidy <- function(expr, bit_threshold = NULL, count_threshold = NULL
   #Converting tibble to matrix
   expr <- as.matrix(expr)
   #Calling the feature selection on the matrix
-  reduced_expr <- scent_select(expr, bit_threshold, count_threshold, perc_threshold, unit, normalise, transpose)
+  reduced_expr <- scent_select(expr,
+                               bit_threshold,
+                               count_threshold,
+                               perc_threshold,
+                               unit,
+                               normalise,
+                               transpose)
   #Converting the matrix back to a tibble
   tibble::as_tibble(reduced_expr)
+}
+
+gene_counts <- function(expr, transpose = FALSE) {
+  if (transpose) {
+    expr <- t(expr)
+  }
+  apply(expr, 2, sum)
+}
+
+rm_low_counts <- function(expr, count_threshold = NULL, perc_threshold = NULL, transpose = FALSE) {
+  if (transpose) {
+    expr <- t(expr)
+  }
+
+  if (is.null(count_threshold) + is.null(perc_threshold) != 1) {
+    stop("\n Precisely one threshold should be used at a time")
+  }
+
+  gene_counts <- gene_counts(expr)
+
+  if (!is.na(count_threshold)) {
+    indices <- gene_counts > count_threshold
+    expr[,indices]
+  } else if (!is.na(perc_threshold)) {
+    indices <- gene_counts > stats::quantile(gene_counts, perc_threshold)
+    expr[,indices]
+  } else {
+    stop()
+  }
+}
+
+rm_low_counts_tidy <- function(expr, count_threshold = NULL, perc_threshold = NULL, transpose = FALSE) {
+  expr <- as.matrix(expr)
+  expr <- rm_low_counts(expr,
+                        count_threshold = count_threshold,
+                        perc_threshold = perc_threshold,
+                        transpose = transpose
+                        )
+  as_tibble(expr)
 }
