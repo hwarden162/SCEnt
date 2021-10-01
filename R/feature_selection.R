@@ -130,6 +130,29 @@ scent_select_tidy <- function(expr, bit_threshold = NULL, count_threshold = NULL
   tibble::as_tibble(reduced_expr)
 }
 
+#' Find the Number of Times Each Gene Has Been Expressed
+#'
+#' @param expr A matrix of gene expressions with cells as rows and genes
+#' as columns
+#' @param transpose A logical value indicating whether the matrix should
+#' be transposed before operations are carried out
+#'
+#' @return A vector of counts of expression for each gene
+#' @export
+#'
+#' @examples
+#' # Creating Data
+#' gene1 <- c(0, 0, 0, 0, 1, 2, 3)
+#' gene2 <- c(5, 5, 3, 2, 0, 0, 0)
+#' gene3 <- c(2, 0, 2, 1, 3, 0, 1)
+#' gene4 <- c(3, 3, 3, 3, 3, 3, 3)
+#' gene5 <- c(0, 0, 0, 0, 5, 0, 0)
+#' genes <- matrix(c(gene1, gene2, gene3, gene4, gene5), ncol = 5)
+#' rownames(genes) <- paste0("cell", 1:7)
+#' colnames(genes) <- paste0("gene", 1:5)
+#'
+#' #Calculating Gene Counts
+#' gene_counts(genes)
 gene_counts <- function(expr, transpose = FALSE) {
   if (transpose) {
     expr <- t(expr)
@@ -137,6 +160,35 @@ gene_counts <- function(expr, transpose = FALSE) {
   apply(expr, 2, sum)
 }
 
+#' Remove Lowly Expressed Genes From Expression Data
+#'
+#' @param expr A matrix of gene expression with cells as rows and genes as
+#' columns
+#' @param count_threshold A threshold for the number of counts a gene must
+#' have to be included. Only one threshold may be used at a time.
+#' @param perc_threshold  A threshold for what percentile the gene counts
+#' should be cut off at. Only one threshold may be used at a time.
+#' @param transpose A logical value indicating whether the expression
+#' matrix should be transposed before any operations are carried out.
+#'
+#' @return A matrix of gene expressions with the low count genes, as
+#' specified by the user, removed.
+#' @export
+#'
+#' @examples
+#' # Creating Data
+#' gene1 <- c(0, 0, 0, 0, 1, 2, 3)
+#' gene2 <- c(5, 5, 3, 2, 0, 0, 0)
+#' gene3 <- c(2, 0, 2, 1, 3, 0, 1)
+#' gene4 <- c(3, 3, 3, 3, 3, 3, 3)
+#' gene5 <- c(0, 0, 0, 0, 5, 0, 0)
+#' gene_counts <- matrix(c(gene1, gene2, gene3, gene4, gene5), ncol = 5)
+#' rownames(gene_counts) <- paste0("cell", 1:7)
+#' colnames(gene_counts) <- paste0("gene", 1:5)
+#'
+#' # Removing Low Count Genes
+#' rm_low_counts(gene_counts, count_threshold = 7)
+#' rm_low_counts(gene_counts, perc_threshold = 0.1)
 rm_low_counts <- function(expr, count_threshold = NULL, perc_threshold = NULL, transpose = FALSE) {
   if (transpose) {
     expr <- t(expr)
@@ -148,10 +200,10 @@ rm_low_counts <- function(expr, count_threshold = NULL, perc_threshold = NULL, t
 
   gene_counts <- gene_counts(expr)
 
-  if (!is.na(count_threshold)) {
+  if (!is.null(count_threshold)) {
     indices <- gene_counts > count_threshold
     expr[, indices]
-  } else if (!is.na(perc_threshold)) {
+  } else if (!is.null(perc_threshold)) {
     indices <- gene_counts > stats::quantile(gene_counts, perc_threshold)
     expr[, indices]
   } else {
@@ -159,6 +211,37 @@ rm_low_counts <- function(expr, count_threshold = NULL, perc_threshold = NULL, t
   }
 }
 
+#' Tidy Wrapper To Remove Lowly Expressed Genes From Expression Data
+#'
+#' @param expr A tibble of gene expression with cells as rows and genes as
+#' columns
+#' @param count_threshold A threshold for the number of counts a gene must
+#' have to be included. Only one threshold may be used at a time.
+#' @param perc_threshold  A threshold for what percentile the gene counts
+#' should be cut off at. Only one threshold may be used at a time.
+#' @param transpose A logical value indicating whether the expression
+#' matrix should be transposed before any operations are carried out.
+#'
+#' @return A tibble of gene expressions with the low count genes, as
+#' specified by the user, removed.
+#' @export
+#'
+#' @examples
+#' # Creating Data
+#' library(tibble)
+#' gene1 <- c(0, 0, 0, 0, 1, 2, 3)
+#' gene2 <- c(5, 5, 3, 2, 0, 0, 0)
+#' gene3 <- c(2, 0, 2, 1, 3, 0, 1)
+#' gene4 <- c(3, 3, 3, 3, 3, 3, 3)
+#' gene5 <- c(0, 0, 0, 0, 5, 0, 0)
+#' gene_counts <- matrix(c(gene1, gene2, gene3, gene4, gene5), ncol = 5)
+#' rownames(gene_counts) <- paste0("cell", 1:7)
+#' colnames(gene_counts) <- paste0("gene", 1:5)
+#' gene_counts <- as_tibble(gene_counts)
+#'
+#' # Removing Low Count Genes
+#' rm_low_counts_tidy(gene_counts, count_threshold = 7)
+#' rm_low_counts_tidy(gene_counts, perc_threshold = 0.1)
 rm_low_counts_tidy <- function(expr, count_threshold = NULL, perc_threshold = NULL, transpose = FALSE) {
   expr <- as.matrix(expr)
   expr <- rm_low_counts(expr,
@@ -166,5 +249,5 @@ rm_low_counts_tidy <- function(expr, count_threshold = NULL, perc_threshold = NU
     perc_threshold = perc_threshold,
     transpose = transpose
   )
-  as_tibble(expr)
+  tibble::as_tibble(expr)
 }
