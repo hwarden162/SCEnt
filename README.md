@@ -12,8 +12,9 @@ population. It can use these metrics to perform feature selection for
 scRNA-seq data.
 
 From the work of Michael J. Casey, Ruben J. Sanchez-Garcia and Ben D.
-MacArthur (2020) <doi:10.1101/2020.10.01.322255>. Package written by
-Hugh Warden.
+MacArthur (2020) &lt;doi:
+<https://doi.org/10.1101/2020.10.01.322255>&gt;. Package written by Hugh
+Warden.
 
 ## Installation
 
